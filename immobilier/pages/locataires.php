@@ -4,108 +4,154 @@ require_once '../config/app.php';
 requireLogin();
 $db = getDB();
 
-// AJOUTER
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-  if ($_POST['action'] === 'ajouter') {
-    $stmt = $db->prepare("INSERT INTO locataires (nom, prenom, telephone, email, cin, actif) VALUES (?,?,?,?,?,1)");
-    $stmt->execute([$_POST['nom'], $_POST['prenom'], $_POST['telephone'], $_POST['email'], $_POST['cin']]);
-  }
-  if ($_POST['action'] === 'modifier') {
-    $stmt = $db->prepare("UPDATE locataires SET nom=?, prenom=?, telephone=?, email=?, cin=? WHERE id=?");
-    $stmt->execute([$_POST['nom'], $_POST['prenom'], $_POST['telephone'], $_POST['email'], $_POST['cin'], $_POST['id']]);
-  }
-  if ($_POST['action'] === 'supprimer') {
-    $db->prepare("DELETE FROM locataires WHERE id=?")->execute([$_POST['id']]);
-  }
-  header("Location: locataires.php"); exit;
+    if ($_POST['action'] === 'ajouter') {
+        $stmt = $db->prepare("INSERT INTO locataires (civilite, nom, prenom, email, telephone, num_cni, statut) VALUES (?,?,?,?,?,?,'actif')");
+        $stmt->execute([$_POST['civilite'], $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['telephone'], $_POST['num_cni']]);
+        setFlash('success', 'Locataire ajouté avec succès.');
+    }
+    if ($_POST['action'] === 'modifier') {
+        $stmt = $db->prepare("UPDATE locataires SET civilite=?, nom=?, prenom=?, email=?, telephone=?, num_cni=? WHERE id=?");
+        $stmt->execute([$_POST['civilite'], $_POST['nom'], $_POST['prenom'], $_POST['email'], $_POST['telephone'], $_POST['num_cni'], $_POST['id']]);
+        setFlash('success', 'Locataire modifié.');
+    }
+    if ($_POST['action'] === 'supprimer') {
+        $db->prepare("DELETE FROM locataires WHERE id=?")->execute([$_POST['id']]);
+        setFlash('warning', 'Locataire supprimé.');
+    }
+    header("Location: locataires.php"); exit;
 }
 
-$locataires = $db->query("SELECT * FROM locataires ORDER BY nom")->fetchAll();
+$locataires = $db->query("SELECT * FROM locataires ORDER BY nom, prenom")->fetchAll();
+$flash = getFlash();
 require_once '../includes/header.php';
 ?>
-<div class="page-content">
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">Locataires</div>
-      <button class="btn btn-primary" onclick="document.getElementById('modalAjout').style.display='flex'">+ Ajouter</button>
+<div class="container-fluid py-4">
+  <?php if($flash): ?>
+  <div class="alert alert-<?= $flash['type'] ?> alert-dismissible fade show">
+    <?= $flash['msg'] ?><button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <?php endif; ?>
+
+  <div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center py-3">
+      <h5 class="mb-0"><i class="bi bi-people-fill me-2 text-success"></i>Locataires</h5>
+      <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalAjout">
+        <i class="bi bi-plus-lg me-1"></i>Ajouter
+      </button>
     </div>
-    <div class="card-body">
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr style="background:var(--bg-card);">
-          <th style="padding:10px;text-align:left;">Nom</th>
-          <th>Téléphone</th><th>Email</th><th>CIN</th><th>Actions</th>
-        </tr></thead>
-        <tbody>
-        <?php foreach($locataires as $l): ?>
-        <tr style="border-top:1px solid var(--border);">
-          <td style="padding:10px;"><?= htmlspecialchars($l['nom'].' '.$l['prenom']) ?></td>
-          <td><?= htmlspecialchars($l['telephone']) ?></td>
-          <td><?= htmlspecialchars($l['email']) ?></td>
-          <td><?= htmlspecialchars($l['cin']) ?></td>
-          <td>
-            <button onclick="editLocataire(<?= htmlspecialchars(json_encode($l)) ?>)" class="btn btn-sm" style="background:var(--accent);color:#000;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Modifier</button>
-            <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer ?')">
-              <input type="hidden" name="action" value="supprimer">
-              <input type="hidden" name="id" value="<?= $l['id'] ?>">
-              <button type="submit" style="background:#e74c3c;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Supprimer</button>
-            </form>
-          </td>
-        </tr>
-        <?php endforeach; ?>
-        </tbody>
-      </table>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Nom complet</th><th>Téléphone</th><th>Email</th><th>CNI</th><th>Statut</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php foreach($locataires as $l): ?>
+          <tr>
+            <td><?= htmlspecialchars($l['civilite'].' '.$l['nom'].' '.$l['prenom']) ?></td>
+            <td><?= htmlspecialchars($l['telephone']) ?></td>
+            <td><?= htmlspecialchars($l['email']) ?></td>
+            <td><?= htmlspecialchars($l['num_cni']) ?></td>
+            <td><?= badgeStatut($l['statut']) ?></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary"
+                onclick='editLocataire(<?= htmlspecialchars(json_encode($l, JSON_HEX_APOS|JSON_HEX_QUOT)) ?>)'
+                data-bs-toggle="modal" data-bs-target="#modalModif">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <form method="POST" class="d-inline" onsubmit="return confirm('Supprimer ce locataire ?')">
+                <input type="hidden" name="action" value="supprimer">
+                <input type="hidden" name="id" value="<?= $l['id'] ?>">
+                <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          <?php endforeach; ?>
+          <?php if(empty($locataires)): ?>
+          <tr><td colspan="6" class="text-center text-muted py-4">Aucun locataire enregistré</td></tr>
+          <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Modal Ajout -->
-<div id="modalAjout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
-  <div style="background:var(--bg-card);padding:30px;border-radius:10px;width:400px;">
-    <h3 style="margin-bottom:20px;">Nouveau locataire</h3>
+<div class="modal fade" id="modalAjout" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Nouveau locataire</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
     <form method="POST">
-      <input type="hidden" name="action" value="ajouter">
-      <input name="nom" placeholder="Nom" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="prenom" placeholder="Prénom" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="telephone" placeholder="Téléphone" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="email" placeholder="Email" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="cin" placeholder="CIN" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <div style="display:flex;gap:10px;margin-top:10px;">
-        <button type="submit" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Enregistrer</button>
-        <button type="button" onclick="document.getElementById('modalAjout').style.display='none'" style="flex:1;padding:10px;background:var(--border);color:var(--text-primary);border:none;border-radius:6px;cursor:pointer;">Annuler</button>
+      <div class="modal-body">
+        <input type="hidden" name="action" value="ajouter">
+        <div class="mb-3">
+          <label class="form-label">Civilité</label>
+          <select name="civilite" class="form-select">
+            <option value="M.">M.</option><option value="Mme">Mme</option><option value="Mlle">Mlle</option>
+          </select>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col"><input name="nom" class="form-control" placeholder="Nom *" required></div>
+          <div class="col"><input name="prenom" class="form-control" placeholder="Prénom"></div>
+        </div>
+        <div class="mb-3"><input name="telephone" class="form-control" placeholder="Téléphone"></div>
+        <div class="mb-3"><input name="email" type="email" class="form-control" placeholder="Email"></div>
+        <div class="mb-3"><input name="num_cni" class="form-control" placeholder="Numéro CNI"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
       </div>
     </form>
-  </div>
+  </div></div>
 </div>
 
 <!-- Modal Modifier -->
-<div id="modalModif" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
-  <div style="background:var(--bg-card);padding:30px;border-radius:10px;width:400px;">
-    <h3 style="margin-bottom:20px;">Modifier locataire</h3>
+<div class="modal fade" id="modalModif" tabindex="-1">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">Modifier locataire</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
     <form method="POST">
-      <input type="hidden" name="action" value="modifier">
-      <input type="hidden" name="id" id="editId">
-      <input name="nom" id="editNom" placeholder="Nom" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="prenom" id="editPrenom" placeholder="Prénom" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="telephone" id="editTel" placeholder="Téléphone" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="email" id="editEmail" placeholder="Email" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <input name="cin" id="editCin" placeholder="CIN" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
-      <div style="display:flex;gap:10px;margin-top:10px;">
-        <button type="submit" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Sauvegarder</button>
-        <button type="button" onclick="document.getElementById('modalModif').style.display='none'" style="flex:1;padding:10px;background:var(--border);color:var(--text-primary);border:none;border-radius:6px;cursor:pointer;">Annuler</button>
+      <div class="modal-body">
+        <input type="hidden" name="action" value="modifier">
+        <input type="hidden" name="id" id="editId">
+        <div class="mb-3">
+          <label class="form-label">Civilité</label>
+          <select name="civilite" id="editCivilite" class="form-select">
+            <option value="M.">M.</option><option value="Mme">Mme</option><option value="Mlle">Mlle</option>
+          </select>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col"><input name="nom" id="editNom" class="form-control" placeholder="Nom *" required></div>
+          <div class="col"><input name="prenom" id="editPrenom" class="form-control" placeholder="Prénom"></div>
+        </div>
+        <div class="mb-3"><input name="telephone" id="editTel" class="form-control" placeholder="Téléphone"></div>
+        <div class="mb-3"><input name="email" id="editEmail" type="email" class="form-control" placeholder="Email"></div>
+        <div class="mb-3"><input name="num_cni" id="editCni" class="form-control" placeholder="Numéro CNI"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="submit" class="btn btn-primary">Sauvegarder</button>
       </div>
     </form>
-  </div>
+  </div></div>
 </div>
 
 <script>
 function editLocataire(l) {
   document.getElementById('editId').value = l.id;
+  document.getElementById('editCivilite').value = l.civilite;
   document.getElementById('editNom').value = l.nom;
   document.getElementById('editPrenom').value = l.prenom;
   document.getElementById('editTel').value = l.telephone;
   document.getElementById('editEmail').value = l.email;
-  document.getElementById('editCin').value = l.cin;
-  document.getElementById('modalModif').style.display = 'flex';
+  document.getElementById('editCni').value = l.num_cni;
 }
 </script>
 <?php require_once '../includes/footer.php'; ?>
