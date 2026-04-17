@@ -10,7 +10,8 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
-    $mdp   = $_POST['mot_de_passe'] ?? '';
+    $mdp   = $_POST['mot_de_passe']
+            ?? '';
 
     if ($email && $mdp) {
         $db   = getDB();

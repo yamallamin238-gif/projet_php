@@ -572,3 +572,23 @@ tbody tr:hover td { background: rgba(255,255,255,.02); }
 .alert-warning { background:rgba(227,179,65,.1); border-color:var(--accent-orange); color:var(--accent-orange); }
 .alert-danger   { background:rgba(248,81,73,.1);  border-color:var(--accent-red);    color:var(--accent-red); }
 .alert-success  { background:rgba(63,185,80,.1);  border-color:var(--accent-green);  color:var(--accent-green); }
+
+/* ===== MODE CLAIR ===== */
+body.light-mode {
+  --bg-main:      #f4f6f9;
+  --bg-card:      #ffffff;
+  --bg-sidebar:   #ffffff;
+  --border:       #e1e4e8;
+  --text-primary: #1c2128;
+  --text-muted:   #57606a;
+  --text-dim:     #8c959f;
+}
+body.light-mode .sidebar { box-shadow: 2px 0 12px rgba(0,0,0,.08); }
+body.light-mode .topbar  { background: #ffffff; border-bottom: 1px solid #e1e4e8; }
+body.light-mode .card    { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+body.light-mode .nav-item:hover { background: rgba(0,0,0,.05); }
+body.light-mode .nav-item.active { background: rgba(212,160,23,.12); }
+body.light-mode .search-box { background: #f0f2f5; border-color: #e1e4e8; }
+body.light-mode .search-box input { color: #1c2128; }
+body.light-mode table thead tr { background: #f6f8fa; }
+body.light-mode table tbody tr:hover { background: #f0f2f5; }

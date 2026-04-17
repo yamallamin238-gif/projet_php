@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
 <!DOCTYPE html>
@@ -28,7 +28,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     </div>
     <div class="logo-text">
       <h2>ImmoGest</h2>
-      <span>Pro · Tableau de bord</span>
+      <span>Pro Â· Tableau de bord</span>
     </div>
   </div>
 
@@ -81,7 +81,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
       <span class="nav-icon icon-red">
         <i class="fa-solid fa-receipt" style="color:#fff;"></i>
       </span>
-      Charges & Dépenses
+      Charges & DÃ©penses
     </a>
 
     <a href="rapports.php" class="nav-item <?= $current_page=='rapports'?'active':'' ?>">
@@ -122,7 +122,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
       <span class="nav-icon icon-gold">
         <i class="fa-solid fa-gear" style="color:#fff;"></i>
       </span>
-      Paramètres
+      ParamÃ¨tres
     </a>
   </div>
 
@@ -146,7 +146,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
   <div class="topbar-title">
     <?= $page_title ?? 'Tableau de bord' ?>
     <?php if(isset($page_subtitle)): ?>
-      <span> · <?= $page_subtitle ?></span>
+      <span> Â· <?= $page_subtitle ?></span>
     <?php endif; ?>
   </div>
 
@@ -165,8 +165,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <button class="btn-icon" title="Messages">
       <i class="fa-solid fa-envelope"></i>
     </button>
-    <button class="btn-icon" title="Mode clair">
-      <i class="fa-solid fa-sun"></i>
-    </button>
+    <button class="btn-icon" id="toggleTheme" title="Mode clair/sombre" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
   </div>
 </header>
+

@@ -1,13 +1,13 @@
-<?php
+﻿<?php
 $page_title = 'Tableau de bord';
 require_once '../includes/header.php';
 
-// === Données fictives (à remplacer par vrai DB) ===
+// === DonnÃ©es fictives (Ã  remplacer par vrai DB) ===
 $stats = [
   ['label'=>'Biens Totaux',       'value'=>'24',         'icon'=>'fa-city',               'class'=>'gold',  'trend'=>'+2',  'dir'=>'up'],
   ['label'=>'Locataires Actifs',  'value'=>'18',         'icon'=>'fa-users',              'class'=>'blue',  'trend'=>'+3',  'dir'=>'up'],
   ['label'=>'Recettes du mois',   'value'=>'4 250 000',  'icon'=>'fa-sack-dollar',        'class'=>'green', 'trend'=>'+8%', 'dir'=>'up'],
-  ['label'=>'Loyers impayés',     'value'=>'3',          'icon'=>'fa-triangle-exclamation','class'=>'red',   'trend'=>'-1',  'dir'=>'down'],
+  ['label'=>'Loyers impayÃ©s',     'value'=>'3',          'icon'=>'fa-triangle-exclamation','class'=>'red',   'trend'=>'-1',  'dir'=>'down'],
 ];
 ?>
 
@@ -17,8 +17,8 @@ $stats = [
   <!-- ALERTES -->
   <div class="alert alert-warning">
     <i class="fa-solid fa-bell"></i>
-    <strong>3 loyers</strong> arrivent à échéance dans les 7 prochains jours. &nbsp;
-    <a href="loyers.php" style="color:inherit; font-weight:700;">Voir les loyers →</a>
+    <strong>3 loyers</strong> arrivent Ã  Ã©chÃ©ance dans les 7 prochains jours. &nbsp;
+    <a href="loyers.php" style="color:inherit; font-weight:700;">Voir les loyers â†’</a>
   </div>
 
   <!-- STAT CARDS -->
@@ -76,7 +76,7 @@ $stats = [
           <canvas id="chartOccupation" width="180" height="180"></canvas>
           <div class="ring-text">
             <div class="ring-pct">75%</div>
-            <div class="ring-lbl">18 / 24 biens occupés</div>
+            <div class="ring-lbl">18 / 24 biens occupÃ©s</div>
           </div>
         </div>
       </div>
@@ -84,17 +84,17 @@ $stats = [
 
   </div>
 
-  <!-- ROW 2 : Locataires récents + Biens + Actions rapides -->
+  <!-- ROW 2 : Locataires rÃ©cents + Biens + Actions rapides -->
   <div class="grid-2">
 
-    <!-- Locataires récents -->
+    <!-- Locataires rÃ©cents -->
     <div class="card">
       <div class="card-header">
         <div class="card-title">
           <span class="title-icon icon-green" style="border-radius:7px; width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
             <i class="fa-solid fa-user-group" style="color:#fff; font-size:12px;"></i>
           </span>
-          Locataires récents
+          Locataires rÃ©cents
         </div>
         <a href="locataires.php" class="btn btn-outline btn-sm">
           <i class="fa-solid fa-arrow-right"></i> Voir tout
@@ -114,11 +114,11 @@ $stats = [
             <tbody>
               <?php
               $tenants = [
-                ['Moussa Diop',    'M',  '#3fb950', 'Appt T3 – Bloc A', '180 000', 'Payé'],
-                ['Fatou Ndiaye',   'F',  '#1f6feb', 'Studio – Bloc B',  '95 000',  'Payé'],
-                ['Aminata Sow',    'A',  '#8b5cf6', 'Villa F4 – Sacré', '350 000', 'Partiel'],
-                ['Omar Ba',        'O',  '#e3b341', 'Appt T2 – Centre', '120 000', 'Impayé'],
-                ['Ndèye Fall',     'N',  '#ec4899', 'Studio – HLM',     '80 000',  'Payé'],
+                ['Moussa Diop',    'M',  '#3fb950', 'Appt T3 â€“ Bloc A', '180 000', 'PayÃ©'],
+                ['Fatou Ndiaye',   'F',  '#1f6feb', 'Studio â€“ Bloc B',  '95 000',  'PayÃ©'],
+                ['Aminata Sow',    'A',  '#8b5cf6', 'Villa F4 â€“ SacrÃ©', '350 000', 'Partiel'],
+                ['Omar Ba',        'O',  '#e3b341', 'Appt T2 â€“ Centre', '120 000', 'ImpayÃ©'],
+                ['NdÃ¨ye Fall',     'N',  '#ec4899', 'Studio â€“ HLM',     '80 000',  'PayÃ©'],
               ];
               foreach($tenants as $t): ?>
               <tr>
@@ -134,8 +134,8 @@ $stats = [
                 <td style="font-weight:600; color:var(--accent-gold);"><?= $t[4] ?> <small style="font-size:10px; color:var(--text-muted);">FCFA</small></td>
                 <td>
                   <?php
-                  $bc = ['Payé'=>'badge-success','Impayé'=>'badge-danger','Partiel'=>'badge-warning'];
-                  $ic = ['Payé'=>'fa-circle-check','Impayé'=>'fa-circle-xmark','Partiel'=>'fa-clock'];
+                  $bc = ['PayÃ©'=>'badge-success','ImpayÃ©'=>'badge-danger','Partiel'=>'badge-warning'];
+                  $ic = ['PayÃ©'=>'fa-circle-check','ImpayÃ©'=>'fa-circle-xmark','Partiel'=>'fa-clock'];
                   ?>
                   <span class="badge <?= $bc[$t[5]] ?>">
                     <i class="fa-solid <?= $ic[$t[5]] ?>"></i>
@@ -166,10 +166,10 @@ $stats = [
         <div class="card-body" style="padding: 12px 22px;">
           <?php
           $biens = [
-            ['fa-building',          '#1f6feb', 'Résidence Les Baobabs', 'Dakar · 8 unités',   '1 440 000'],
-            ['fa-house',             '#3fb950', 'Villa Corniche',        'Mermoz · 1 unité',   '350 000'],
-            ['fa-hotel',             '#8b5cf6', 'Immeuble Touba',        'Médina · 5 unités',  '600 000'],
-            ['fa-house-flag',        '#e3b341', 'Duplex Almadies',       'Almadies · 2 unités','420 000'],
+            ['fa-building',          '#1f6feb', 'RÃ©sidence Les Baobabs', 'Dakar Â· 8 unitÃ©s',   '1 440 000'],
+            ['fa-house',             '#3fb950', 'Villa Corniche',        'Mermoz Â· 1 unitÃ©',   '350 000'],
+            ['fa-hotel',             '#8b5cf6', 'Immeuble Touba',        'MÃ©dina Â· 5 unitÃ©s',  '600 000'],
+            ['fa-house-flag',        '#e3b341', 'Duplex Almadies',       'Almadies Â· 2 unitÃ©s','420 000'],
           ];
           foreach($biens as $b): ?>
           <div class="property-item">
@@ -212,7 +212,7 @@ $stats = [
             </a>
             <a href="contrats.php?action=new" class="quick-btn">
               <span class="qb-icon icon-purple"><i class="fa-solid fa-pen-to-square" style="color:#fff; font-size:13px;"></i></span>
-              Créer contrat
+              CrÃ©er contrat
             </a>
             <a href="maintenances.php?action=new" class="quick-btn">
               <span class="qb-icon icon-red"><i class="fa-solid fa-toolbox" style="color:#fff; font-size:13px;"></i></span>
@@ -246,11 +246,11 @@ $stats = [
         <div class="timeline">
           <?php
           $pays = [
-            ['fa-circle-check','icon-green', '#3fb950', 'Moussa Diop',    '180 000 FCFA', 'Appt T3 · Hier 14:32',      'up'],
-            ['fa-circle-check','icon-green', '#3fb950', 'Fatou Ndiaye',   '95 000 FCFA',  'Studio · Hier 09:15',       'up'],
-            ['fa-circle-xmark','icon-red',   '#f85149', 'Omar Ba',        '120 000 FCFA', 'Appt T2 · Impayé 5j',       'down'],
-            ['fa-money-bill',  'icon-gold',  '#d4a017', 'Aminata Sow',    '175 000 FCFA', 'Villa F4 · Partiel · 2j',   'up'],
-            ['fa-circle-check','icon-green', '#3fb950', 'Ndèye Fall',     '80 000 FCFA',  'Studio HLM · 03/07/2025',   'up'],
+            ['fa-circle-check','icon-green', '#3fb950', 'Moussa Diop',    '180 000 FCFA', 'Appt T3 Â· Hier 14:32',      'up'],
+            ['fa-circle-check','icon-green', '#3fb950', 'Fatou Ndiaye',   '95 000 FCFA',  'Studio Â· Hier 09:15',       'up'],
+            ['fa-circle-xmark','icon-red',   '#f85149', 'Omar Ba',        '120 000 FCFA', 'Appt T2 Â· ImpayÃ© 5j',       'down'],
+            ['fa-money-bill',  'icon-gold',  '#d4a017', 'Aminata Sow',    '175 000 FCFA', 'Villa F4 Â· Partiel Â· 2j',   'up'],
+            ['fa-circle-check','icon-green', '#3fb950', 'NdÃ¨ye Fall',     '80 000 FCFA',  'Studio HLM Â· 03/07/2025',   'up'],
           ];
           foreach($pays as $p): ?>
           <div class="timeline-item">
@@ -282,11 +282,11 @@ $stats = [
 
         <?php
         $alertes = [
-          ['fa-file-signature',   'icon-orange', 'Contrat expirant',     'Moussa Diop · Expire dans 12 jours',        'warning'],
-          ['fa-triangle-exclamation','icon-red', 'Loyer impayé',         'Omar Ba · Retard de 5 jours',               'danger'],
-          ['fa-screwdriver-wrench','icon-pink',  'Maintenance urgente',  'Fuite d\'eau · Résidence Les Baobabs',      'danger'],
-          ['fa-calendar-check',   'icon-green',  'Visite programmée',    'Nouvel appartement · 15 Juillet 09h00',     'success'],
-          ['fa-file-invoice-dollar','icon-blue', 'Déclaration fiscale',  'Revenus fonciers 2025 · Avant 31 Juillet',  'info'],
+          ['fa-file-signature',   'icon-orange', 'Contrat expirant',     'Moussa Diop Â· Expire dans 12 jours',        'warning'],
+          ['fa-triangle-exclamation','icon-red', 'Loyer impayÃ©',         'Omar Ba Â· Retard de 5 jours',               'danger'],
+          ['fa-screwdriver-wrench','icon-pink',  'Maintenance urgente',  'Fuite d\'eau Â· RÃ©sidence Les Baobabs',      'danger'],
+          ['fa-calendar-check',   'icon-green',  'Visite programmÃ©e',    'Nouvel appartement Â· 15 Juillet 09h00',     'success'],
+          ['fa-file-invoice-dollar','icon-blue', 'DÃ©claration fiscale',  'Revenus fonciers 2025 Â· Avant 31 Juillet',  'info'],
         ];
         foreach($alertes as $a): ?>
         <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(255,255,255,.03); border-radius:9px; border:1px solid var(--border);">
@@ -309,3 +309,4 @@ $stats = [
 </div><!-- /.page-content -->
 
 <?php require_once '../includes/footer.php'; ?>
+

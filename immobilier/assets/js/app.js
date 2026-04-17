@@ -96,3 +96,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
+// ── Mode clair / sombre ─────────────────────────────
+function toggleTheme() {
+  const body = document.body;
+  const icon = document.getElementById('themeIcon');
+  const isLight = body.classList.toggle('light-mode');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  if (icon) {
+    icon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+  }
+}
+
+// Appliquer le thème sauvegardé au chargement
+(function() {
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    const icon = document.getElementById('themeIcon');
+    if (icon) icon.className = 'fa-solid fa-moon';
+  }
+})();
