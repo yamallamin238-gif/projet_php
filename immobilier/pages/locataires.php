@@ -2,161 +2,110 @@
 $page_title = 'Locataires';
 require_once '../config/app.php';
 requireLogin();
+$db = getDB();
+
+// AJOUTER
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+  if ($_POST['action'] === 'ajouter') {
+    $stmt = $db->prepare("INSERT INTO locataires (nom, prenom, telephone, email, cin, actif) VALUES (?,?,?,?,?,1)");
+    $stmt->execute([$_POST['nom'], $_POST['prenom'], $_POST['telephone'], $_POST['email'], $_POST['cin']]);
+  }
+  if ($_POST['action'] === 'modifier') {
+    $stmt = $db->prepare("UPDATE locataires SET nom=?, prenom=?, telephone=?, email=?, cin=? WHERE id=?");
+    $stmt->execute([$_POST['nom'], $_POST['prenom'], $_POST['telephone'], $_POST['email'], $_POST['cin'], $_POST['id']]);
+  }
+  if ($_POST['action'] === 'supprimer') {
+    $db->prepare("DELETE FROM locataires WHERE id=?")->execute([$_POST['id']]);
+  }
+  header("Location: locataires.php"); exit;
+}
+
+$locataires = $db->query("SELECT * FROM locataires ORDER BY nom")->fetchAll();
 require_once '../includes/header.php';
 ?>
-
 <div class="page-content">
-
-  <!-- En-tÃªte -->
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
-    <div>
-      <h1 style="font-family:'Playfair Display',serif; font-size:26px; color:var(--text-primary);">
-        <i class="fa-solid fa-users" style="color:var(--accent-gold); margin-right:10px;"></i>
-        Gestion des locataires
-      </h1>
-      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">18 locataires actifs Â· 2 en attente</p>
-    </div>
-    <a href="?action=new" class="btn btn-primary">
-      <i class="fa-solid fa-user-plus"></i> Nouveau locataire
-    </a>
-  </div>
-
-  <!-- Filtres -->
-  <div class="card" style="margin-bottom:18px;">
-    <div class="card-body" style="display:flex; gap:12px; flex-wrap:wrap; padding:16px 22px;">
-      <div class="search-box" style="width:260px;">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Nom, tÃ©lÃ©phone...">
-      </div>
-      <select class="form-control form-select" style="width:160px; padding:8px 14px;">
-        <option>Tous les statuts</option>
-        <option>Actif</option>
-        <option>Inactif</option>
-        <option>En attente</option>
-      </select>
-      <select class="form-control form-select" style="width:160px; padding:8px 14px;">
-        <option>Tous les biens</option>
-        <option>RÃ©sidence Baobabs</option>
-        <option>Villa Corniche</option>
-      </select>
-      <button class="btn btn-outline">
-        <i class="fa-solid fa-sliders"></i> Filtrer
-      </button>
-    </div>
-  </div>
-
-  <!-- Tableau locataires -->
   <div class="card">
     <div class="card-header">
-      <div class="card-title">
-        <span class="title-icon icon-green" style="border-radius:7px; width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-          <i class="fa-solid fa-user-group" style="color:#fff; font-size:12px;"></i>
-        </span>
-        Liste des locataires
-      </div>
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-outline btn-sm"><i class="fa-solid fa-file-excel"></i> Exporter</button>
-        <button class="btn btn-outline btn-sm"><i class="fa-solid fa-print"></i> Imprimer</button>
-      </div>
+      <div class="card-title">Locataires</div>
+      <button class="btn btn-primary" onclick="document.getElementById('modalAjout').style.display='flex'">+ Ajouter</button>
     </div>
-    <div class="card-body" style="padding:0;">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Locataire</th>
-              <th>Contact</th>
-              <th>Bien louÃ©</th>
-              <th>Loyer</th>
-              <th>Contrat</th>
-              <th>Statut</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php
-            $locataires = [
-              [1,'Moussa Diop',    '77 123 45 67','moussa@email.com',    'Appt T3 â€“ Bloc A',    '180 000','Jan 2024','Jan 2026','Actif'],
-              [2,'Fatou Ndiaye',   '76 234 56 78','fatou@email.com',     'Studio â€“ Bloc B',     '95 000', 'Mar 2024','Mar 2026','Actif'],
-              [3,'Aminata Sow',    '70 345 67 89','aminata@email.com',   'Villa F4 â€“ SacrÃ© CÅ“ur','350 000','Juil 2023','Juil 2025','Actif'],
-              [4,'Omar Ba',        '78 456 78 90','omar@email.com',      'Appt T2 â€“ Centre',    '120 000','FÃ©v 2024','FÃ©v 2026','ImpayÃ©'],
-              [5,'NdÃ¨ye Fall',     '77 567 89 01','ndeye@email.com',     'Studio â€“ HLM',        '80 000', 'Mai 2024','Mai 2026','Actif'],
-              [6,'Ibrahima Sall',  '76 678 90 12','ibra@email.com',      'Appt T4 â€“ Plateau',   '250 000','Oct 2023','Oct 2025','Actif'],
-              [7,'Mariama Diallo', '70 789 01 23','mariama@email.com',   'Studio â€“ MÃ©dina',     '75 000', 'Juin 2024','Juin 2026','En attente'],
-            ];
-            $colors = ['#3fb950','#1f6feb','#8b5cf6','#e3b341','#ec4899','#06b6d4','#f85149'];
-            foreach($locataires as $i => $l):
-              $statut_class = match($l[8]) {
-                'Actif' => 'badge-success', 'ImpayÃ©' => 'badge-danger',
-                'En attente' => 'badge-warning', default => 'badge-info'
-              };
-              $statut_icon = match($l[8]) {
-                'Actif' => 'fa-circle-check', 'ImpayÃ©' => 'fa-circle-xmark',
-                'En attente' => 'fa-clock', default => 'fa-circle'
-              };
-            ?>
-            <tr>
-              <td style="color:var(--text-muted); font-size:12px;">#<?= str_pad($l[0],3,'0',STR_PAD_LEFT) ?></td>
-              <td>
-                <div class="tenant-cell">
-                  <div class="tenant-avatar" style="background:<?= $colors[$i] ?>22; color:<?= $colors[$i] ?>; border:1px solid <?= $colors[$i] ?>44; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                    <i class="fa-solid fa-user" style="font-size:14px;"></i>
-                  </div>
-                  <div>
-                    <div style="font-weight:600;"><?= $l[1] ?></div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div style="font-size:12.5px;"><?= $l[2] ?></div>
-                <div style="font-size:11px; color:var(--text-muted);"><?= $l[3] ?></div>
-              </td>
-              <td>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <i class="fa-solid fa-building" style="color:var(--accent-blue); font-size:12px;"></i>
-                  <span style="font-size:13px;"><?= $l[4] ?></span>
-                </div>
-              </td>
-              <td style="font-weight:700; color:var(--accent-gold);">
-                <?= number_format($l[5],0,',',' ') ?> <small style="font-size:10px; color:var(--text-muted); font-weight:400;">FCFA</small>
-              </td>
-              <td>
-                <div style="font-size:12px; color:var(--text-muted);">
-                  <i class="fa-solid fa-calendar-day" style="font-size:10px; margin-right:3px;"></i><?= $l[6] ?>
-                </div>
-                <div style="font-size:12px; color:var(--text-muted);">
-                  <i class="fa-solid fa-calendar-check" style="font-size:10px; margin-right:3px;"></i><?= $l[7] ?>
-                </div>
-              </td>
-              <td>
-                <span class="badge <?= $statut_class ?>">
-                  <i class="fa-solid <?= $statut_icon ?>"></i>
-                  <?= $l[8] ?>
-                </span>
-              </td>
-              <td>
-                <div style="display:flex; gap:6px;">
-                  <button class="btn-icon" title="Voir" style="width:30px; height:30px; border-radius:7px;">
-                    <i class="fa-solid fa-eye" style="font-size:12px;"></i>
-                  </button>
-                  <button class="btn-icon" title="Modifier" style="width:30px; height:30px; border-radius:7px;">
-                    <i class="fa-solid fa-pen" style="font-size:12px;"></i>
-                  </button>
-                  <button class="btn-icon" title="Supprimer" style="width:30px; height:30px; border-radius:7px; border-color:var(--accent-red)20;">
-                    <i class="fa-solid fa-trash-can" style="font-size:12px; color:var(--accent-red);"></i>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
+    <div class="card-body">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="background:var(--bg-card);">
+          <th style="padding:10px;text-align:left;">Nom</th>
+          <th>Téléphone</th><th>Email</th><th>CIN</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+        <?php foreach($locataires as $l): ?>
+        <tr style="border-top:1px solid var(--border);">
+          <td style="padding:10px;"><?= htmlspecialchars($l['nom'].' '.$l['prenom']) ?></td>
+          <td><?= htmlspecialchars($l['telephone']) ?></td>
+          <td><?= htmlspecialchars($l['email']) ?></td>
+          <td><?= htmlspecialchars($l['cin']) ?></td>
+          <td>
+            <button onclick="editLocataire(<?= htmlspecialchars(json_encode($l)) ?>)" class="btn btn-sm" style="background:var(--accent);color:#000;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Modifier</button>
+            <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer ?')">
+              <input type="hidden" name="action" value="supprimer">
+              <input type="hidden" name="id" value="<?= $l['id'] ?>">
+              <button type="submit" style="background:#e74c3c;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <?php endforeach; ?>
+        </tbody>
+      </table>
     </div>
   </div>
-
 </div>
 
-<?php require_once '../includes/footer.php'; ?>
+<!-- Modal Ajout -->
+<div id="modalAjout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg-card);padding:30px;border-radius:10px;width:400px;">
+    <h3 style="margin-bottom:20px;">Nouveau locataire</h3>
+    <form method="POST">
+      <input type="hidden" name="action" value="ajouter">
+      <input name="nom" placeholder="Nom" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="prenom" placeholder="Prénom" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="telephone" placeholder="Téléphone" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="email" placeholder="Email" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="cin" placeholder="CIN" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button type="submit" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Enregistrer</button>
+        <button type="button" onclick="document.getElementById('modalAjout').style.display='none'" style="flex:1;padding:10px;background:var(--border);color:var(--text-primary);border:none;border-radius:6px;cursor:pointer;">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
 
+<!-- Modal Modifier -->
+<div id="modalModif" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg-card);padding:30px;border-radius:10px;width:400px;">
+    <h3 style="margin-bottom:20px;">Modifier locataire</h3>
+    <form method="POST">
+      <input type="hidden" name="action" value="modifier">
+      <input type="hidden" name="id" id="editId">
+      <input name="nom" id="editNom" placeholder="Nom" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="prenom" id="editPrenom" placeholder="Prénom" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="telephone" id="editTel" placeholder="Téléphone" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="email" id="editEmail" placeholder="Email" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="cin" id="editCin" placeholder="CIN" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button type="submit" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Sauvegarder</button>
+        <button type="button" onclick="document.getElementById('modalModif').style.display='none'" style="flex:1;padding:10px;background:var(--border);color:var(--text-primary);border:none;border-radius:6px;cursor:pointer;">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function editLocataire(l) {
+  document.getElementById('editId').value = l.id;
+  document.getElementById('editNom').value = l.nom;
+  document.getElementById('editPrenom').value = l.prenom;
+  document.getElementById('editTel').value = l.telephone;
+  document.getElementById('editEmail').value = l.email;
+  document.getElementById('editCin').value = l.cin;
+  document.getElementById('modalModif').style.display = 'flex';
+}
+</script>
+<?php require_once '../includes/footer.php'; ?>

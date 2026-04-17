@@ -2,129 +2,109 @@
 $page_title = 'Contrats';
 require_once '../config/app.php';
 requireLogin();
+$db = getDB();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+  if ($_POST['action'] === 'ajouter') {
+    $stmt = $db->prepare("INSERT INTO contrats (locataire_id, logement_id, date_debut, date_fin, loyer, caution, statut) VALUES (?,?,?,?,?,?,?)");
+    $stmt->execute([$_POST['locataire_id'], $_POST['logement_id'], $_POST['date_debut'], $_POST['date_fin'], $_POST['loyer'], $_POST['caution'], 'actif']);
+    $db->prepare("UPDATE logements SET statut='occupe' WHERE id=?")->execute([$_POST['logement_id']]);
+  }
+  if ($_POST['action'] === 'resilier') {
+    $db->prepare("UPDATE contrats SET statut='resilie' WHERE id=?")->execute([$_POST['id']]);
+    $db->prepare("UPDATE logements SET statut='libre' WHERE id=(SELECT logement_id FROM contrats WHERE id=?)")->execute([$_POST['id']]);
+  }
+  if ($_POST['action'] === 'supprimer') {
+    $db->prepare("DELETE FROM contrats WHERE id=?")->execute([$_POST['id']]);
+  }
+  header("Location: contrats.php"); exit;
+}
+
+$contrats = $db->query("
+  SELECT c.*, CONCAT(l.nom,' ',l.prenom) as locataire_nom, b.titre as bien_titre
+  FROM contrats c
+  JOIN locataires l ON c.locataire_id = l.id
+  JOIN logements b ON c.logement_id = b.id
+  ORDER BY c.date_debut DESC
+")->fetchAll();
+$locataires = $db->query("SELECT * FROM locataires WHERE actif=1 ORDER BY nom")->fetchAll();
+$biens_libres = $db->query("SELECT * FROM logements WHERE statut='libre' ORDER BY titre")->fetchAll();
+
 require_once '../includes/header.php';
 ?>
-
 <div class="page-content">
-
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
-    <div>
-      <h1 style="font-family:'Playfair Display',serif; font-size:26px;">
-        <i class="fa-solid fa-file-contract" style="color:var(--accent-gold); margin-right:10px;"></i>
-        Gestion des contrats
-      </h1>
-      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">18 actifs Â· 2 en cours de renouvellement Â· 1 expirÃ©</p>
-    </div>
-    <a href="?action=new" class="btn btn-primary">
-      <i class="fa-solid fa-pen-to-square"></i> Nouveau contrat
-    </a>
-  </div>
-
-  <!-- Alertes contrats -->
-  <div class="alert alert-warning">
-    <i class="fa-solid fa-triangle-exclamation"></i>
-    <strong>3 contrats</strong> expirent dans les 30 prochains jours. Pensez Ã  les renouveler.
-  </div>
-
   <div class="card">
     <div class="card-header">
-      <div class="card-title">
-        <span class="title-icon icon-purple" style="border-radius:7px; width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
-          <i class="fa-solid fa-file-contract" style="color:#fff; font-size:12px;"></i>
-        </span>
-        Liste des contrats
-      </div>
+      <div class="card-title">Contrats de Location</div>
+      <button onclick="document.getElementById('modalContratAjout').style.display='flex'" style="padding:8px 16px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">+ Nouveau contrat</button>
     </div>
-    <div class="card-body" style="padding:0;">
-      <table>
-        <thead>
-          <tr>
-            <th>NÂ° Contrat</th>
-            <th>Locataire</th>
-            <th>Bien</th>
-            <th>Type</th>
-            <th>DÃ©but</th>
-            <th>Fin</th>
-            <th>Loyer</th>
-            <th>Statut</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+    <div class="card-body">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:10px;text-align:left;">Locataire</th>
+          <th>Bien</th><th>Début</th><th>Fin</th><th>Loyer</th><th>Statut</th><th>Actions</th>
+        </tr></thead>
         <tbody>
-          <?php
-          $contrats = [
-            ['CTR-001','Moussa Diop',    'Appt T3 â€“ Bloc A',    'Location nue',     '01/01/2024','31/12/2025','180 000','Actif'],
-            ['CTR-002','Fatou Ndiaye',   'Studio â€“ Bloc B',     'Location meublÃ©e', '01/03/2024','28/02/2026','95 000', 'Actif'],
-            ['CTR-003','Aminata Sow',    'Villa F4 â€“ SacrÃ© CÅ“ur','Location nue',   '01/07/2023','30/06/2025','350 000','Expiration proche'],
-            ['CTR-004','Omar Ba',        'Appt T2 â€“ Centre',    'Location nue',     '01/02/2024','31/01/2026','120 000','Actif'],
-            ['CTR-005','NdÃ¨ye Fall',     'Studio â€“ HLM',        'Location meublÃ©e', '01/05/2024','30/04/2026','80 000', 'Actif'],
-            ['CTR-006','Ibrahima Sall',  'Appt T4 â€“ Plateau',   'Location nue',     '01/10/2023','30/09/2025','250 000','Expiration proche'],
-          ];
-          $colors = ['#3fb950','#1f6feb','#8b5cf6','#e3b341','#ec4899','#06b6d4'];
-          foreach($contrats as $i => $c):
-            $sc = match($c[7]) {
-              'Actif'=>'badge-success','Expiration proche'=>'badge-warning',
-              'ExpirÃ©'=>'badge-danger','RÃ©siliÃ©'=>'badge-danger', default=>'badge-info'
-            };
-            $si = match($c[7]) {
-              'Actif'=>'fa-circle-check','Expiration proche'=>'fa-clock',
-              'ExpirÃ©'=>'fa-circle-xmark', default=>'fa-circle'
-            };
-          ?>
-          <tr>
-            <td>
-              <span style="font-family:monospace; background:rgba(255,255,255,.05); padding:3px 8px; border-radius:5px; font-size:12px; color:var(--accent-gold);">
-                <?= $c[0] ?>
-              </span>
-            </td>
-            <td>
-              <div class="tenant-cell">
-                <div class="tenant-avatar" style="background:<?= $colors[$i] ?>22; color:<?= $colors[$i] ?>; border:1px solid <?= $colors[$i] ?>44; width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                  <i class="fa-solid fa-user" style="font-size:13px;"></i>
-                </div>
-                <span style="font-weight:600;"><?= $c[1] ?></span>
-              </div>
-            </td>
-            <td style="font-size:12.5px; color:var(--text-muted);">
-              <i class="fa-solid fa-building" style="font-size:11px; color:var(--accent-blue); margin-right:4px;"></i><?= $c[2] ?>
-            </td>
-            <td>
-              <span style="font-size:12px; display:flex; align-items:center; gap:5px;">
-                <i class="fa-solid fa-<?= strpos($c[3],'meublÃ©e')!==false ? 'couch' : 'key' ?>" style="color:var(--accent-purple, #8b5cf6);"></i>
-                <?= $c[3] ?>
-              </span>
-            </td>
-            <td style="font-size:12.5px;">
-              <i class="fa-solid fa-play" style="font-size:9px; color:var(--accent-green); margin-right:4px;"></i><?= $c[4] ?>
-            </td>
-            <td style="font-size:12.5px;">
-              <i class="fa-solid fa-stop" style="font-size:9px; color:var(--accent-red); margin-right:4px;"></i><?= $c[5] ?>
-            </td>
-            <td style="font-weight:700; color:var(--accent-gold);">
-              <?= number_format((int)str_replace(' ','',$c[6]),0,',',' ') ?> <small style="font-size:10px; color:var(--text-muted); font-weight:400;">FCFA</small>
-            </td>
-            <td><span class="badge <?= $sc ?>"><i class="fa-solid <?= $si ?>"></i><?= $c[7] ?></span></td>
-            <td>
-              <div style="display:flex; gap:5px;">
-                <button class="btn-icon" title="Voir" style="width:30px; height:30px; border-radius:7px;">
-                  <i class="fa-solid fa-eye" style="font-size:12px;"></i>
-                </button>
-                <button class="btn-icon" title="PDF" style="width:30px; height:30px; border-radius:7px;">
-                  <i class="fa-solid fa-file-pdf" style="font-size:12px; color:var(--accent-red);"></i>
-                </button>
-                <button class="btn-icon" title="Renouveler" style="width:30px; height:30px; border-radius:7px;">
-                  <i class="fa-solid fa-rotate" style="font-size:12px; color:var(--accent-blue);"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-          <?php endforeach; ?>
+        <?php foreach($contrats as $c): ?>
+        <tr style="border-top:1px solid var(--border);">
+          <td style="padding:10px;"><?= htmlspecialchars($c['locataire_nom']) ?></td>
+          <td><?= htmlspecialchars($c['bien_titre']) ?></td>
+          <td><?= $c['date_debut'] ?></td>
+          <td><?= $c['date_fin'] ?></td>
+          <td><?= number_format($c['loyer'],0,',',' ') ?> FCFA</td>
+          <td><span style="padding:3px 10px;border-radius:20px;font-size:12px;background:<?= $c['statut']==='actif'?'#27ae60':'#95a5a6' ?>;color:#fff;"><?= $c['statut'] ?></span></td>
+          <td>
+            <?php if($c['statut']==='actif'): ?>
+            <form method="POST" style="display:inline;" onsubmit="return confirm('Résilier ce contrat ?')">
+              <input type="hidden" name="action" value="resilier">
+              <input type="hidden" name="id" value="<?= $c['id'] ?>">
+              <button type="submit" style="background:#e67e22;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Résilier</button>
+            </form>
+            <?php endif; ?>
+            <form method="POST" style="display:inline;" onsubmit="return confirm('Supprimer ?')">
+              <input type="hidden" name="action" value="supprimer">
+              <input type="hidden" name="id" value="<?= $c['id'] ?>">
+              <button type="submit" style="background:#e74c3c;color:#fff;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;">Supprimer</button>
+            </form>
+          </td>
+        </tr>
+        <?php endforeach; ?>
         </tbody>
       </table>
     </div>
   </div>
-
 </div>
 
+<div id="modalContratAjout" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;">
+  <div style="background:var(--bg-card);padding:30px;border-radius:10px;width:420px;">
+    <h3 style="margin-bottom:20px;">Nouveau contrat</h3>
+    <form method="POST">
+      <input type="hidden" name="action" value="ajouter">
+      <label style="color:var(--text-muted);font-size:13px;">Locataire</label>
+      <select name="locataire_id" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);">
+        <option value="">-- Choisir --</option>
+        <?php foreach($locataires as $l): ?>
+        <option value="<?= $l['id'] ?>"><?= htmlspecialchars($l['nom'].' '.$l['prenom']) ?></option>
+        <?php endforeach; ?>
+      </select><br>
+      <label style="color:var(--text-muted);font-size:13px;">Bien (libres uniquement)</label>
+      <select name="logement_id" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);">
+        <option value="">-- Choisir --</option>
+        <?php foreach($biens_libres as $b): ?>
+        <option value="<?= $b['id'] ?>"><?= htmlspecialchars($b['titre']) ?> — <?= number_format($b['loyer_mensuel'],0,',',' ') ?> FCFA</option>
+        <?php endforeach; ?>
+      </select><br>
+      <label style="color:var(--text-muted);font-size:13px;">Date début</label>
+      <input name="date_debut" type="date" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <label style="color:var(--text-muted);font-size:13px;">Date fin</label>
+      <input name="date_fin" type="date" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="loyer" type="number" placeholder="Loyer mensuel (FCFA)" required style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <input name="caution" type="number" placeholder="Caution (FCFA)" style="width:100%;padding:8px;margin-bottom:10px;background:var(--bg-main);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);"><br>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;">Créer</button>
+        <button type="button" onclick="document.getElementById('modalContratAjout').style.display='none'" style="flex:1;padding:10px;background:var(--border);color:var(--text-primary);border:none;border-radius:6px;cursor:pointer;">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
 <?php require_once '../includes/footer.php'; ?>
-
