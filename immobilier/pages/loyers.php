@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $page_title = 'Loyers & Paiements';
+require_once '../config/app.php';
+requireLogin();
 require_once '../includes/header.php';
 ?>
 
@@ -11,7 +13,7 @@ require_once '../includes/header.php';
         <i class="fa-solid fa-hand-holding-dollar" style="color:var(--accent-gold); margin-right:10px;"></i>
         Loyers & Paiements
       </h1>
-      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">Juillet 2025 · 15/18 réglés</p>
+      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">Juillet 2025 Â· 15/18 rÃ©glÃ©s</p>
     </div>
     <div style="display:flex; gap:10px;">
       <button class="btn btn-outline"><i class="fa-solid fa-file-pdf"></i> Quittances</button>
@@ -26,9 +28,9 @@ require_once '../includes/header.php';
     <?php
     $ls = [
       ['fa-circle-dollar-to-slot','gold',  'Total attendu',  '2 130 000 FCFA', '', ''],
-      ['fa-circle-check',         'green', 'Encaissé',       '1 755 000 FCFA', '+82%','up'],
+      ['fa-circle-check',         'green', 'EncaissÃ©',       '1 755 000 FCFA', '+82%','up'],
       ['fa-hourglass-half',       'orange','En attente',     '255 000 FCFA',   '',''],
-      ['fa-circle-xmark',         'red',   'Impayés',        '120 000 FCFA',   '3','down'],
+      ['fa-circle-xmark',         'red',   'ImpayÃ©s',        '120 000 FCFA',   '3','down'],
     ];
     foreach($ls as $s): ?>
     <div class="stat-card <?= $s[1] ?>">
@@ -56,7 +58,7 @@ require_once '../includes/header.php';
         <span class="title-icon icon-orange" style="border-radius:7px; width:30px; height:30px; display:flex; align-items:center; justify-content:center;">
           <i class="fa-solid fa-receipt" style="color:#fff; font-size:12px;"></i>
         </span>
-        Loyers · Juillet 2025
+        Loyers Â· Juillet 2025
       </div>
       <div style="display:flex; gap:8px;">
         <select class="btn btn-outline btn-sm">
@@ -70,8 +72,8 @@ require_once '../includes/header.php';
           <tr>
             <th>Locataire</th>
             <th>Bien</th>
-            <th>Montant dû</th>
-            <th>Payé</th>
+            <th>Montant dÃ»</th>
+            <th>PayÃ©</th>
             <th>Reste</th>
             <th>Date paiement</th>
             <th>Mode</th>
@@ -82,19 +84,19 @@ require_once '../includes/header.php';
         <tbody>
           <?php
           $loyers = [
-            ['Moussa Diop',    'Appt T3',  '180 000','180 000','0',      '01/07/2025','Wave',        'Payé'],
-            ['Fatou Ndiaye',   'Studio B', '95 000', '95 000', '0',      '02/07/2025','Orange Money','Payé'],
+            ['Moussa Diop',    'Appt T3',  '180 000','180 000','0',      '01/07/2025','Wave',        'PayÃ©'],
+            ['Fatou Ndiaye',   'Studio B', '95 000', '95 000', '0',      '02/07/2025','Orange Money','PayÃ©'],
             ['Aminata Sow',    'Villa F4', '350 000','175 000','175 000', '05/07/2025','Virement',    'Partiel'],
-            ['Omar Ba',        'Appt T2',  '120 000','0',      '120 000', '—',         '—',           'Impayé'],
-            ['Ndèye Fall',     'Studio HLM','80 000','80 000', '0',      '01/07/2025','Espèces',     'Payé'],
-            ['Ibrahima Sall',  'Appt T4',  '250 000','250 000','0',      '03/07/2025','Wave',        'Payé'],
-            ['Mariama Diallo', 'Studio Médina','75 000','75 000','0',    '04/07/2025','Orange Money','Payé'],
+            ['Omar Ba',        'Appt T2',  '120 000','0',      '120 000', 'â€”',         'â€”',           'ImpayÃ©'],
+            ['NdÃ¨ye Fall',     'Studio HLM','80 000','80 000', '0',      '01/07/2025','EspÃ¨ces',     'PayÃ©'],
+            ['Ibrahima Sall',  'Appt T4',  '250 000','250 000','0',      '03/07/2025','Wave',        'PayÃ©'],
+            ['Mariama Diallo', 'Studio MÃ©dina','75 000','75 000','0',    '04/07/2025','Orange Money','PayÃ©'],
           ];
           $colors = ['#3fb950','#1f6feb','#8b5cf6','#e3b341','#ec4899','#06b6d4','#f85149'];
-          $mode_icons = ['Wave'=>'fa-mobile-screen-button','Orange Money'=>'fa-mobile-screen','Virement'=>'fa-building-columns','Espèces'=>'fa-money-bills','—'=>'fa-minus'];
+          $mode_icons = ['Wave'=>'fa-mobile-screen-button','Orange Money'=>'fa-mobile-screen','Virement'=>'fa-building-columns','EspÃ¨ces'=>'fa-money-bills','â€”'=>'fa-minus'];
           foreach($loyers as $i => $l):
-            $sc = match($l[7]) { 'Payé'=>'badge-success','Impayé'=>'badge-danger','Partiel'=>'badge-warning', default=>'badge-info' };
-            $si = match($l[7]) { 'Payé'=>'fa-circle-check','Impayé'=>'fa-circle-xmark','Partiel'=>'fa-hourglass-half', default=>'fa-circle' };
+            $sc = match($l[7]) { 'PayÃ©'=>'badge-success','ImpayÃ©'=>'badge-danger','Partiel'=>'badge-warning', default=>'badge-info' };
+            $si = match($l[7]) { 'PayÃ©'=>'fa-circle-check','ImpayÃ©'=>'fa-circle-xmark','Partiel'=>'fa-hourglass-half', default=>'fa-circle' };
           ?>
           <tr>
             <td>
@@ -109,8 +111,8 @@ require_once '../includes/header.php';
               <i class="fa-solid fa-door-open" style="font-size:11px; margin-right:4px;"></i><?= $l[1] ?>
             </td>
             <td style="font-weight:600;"><?= number_format((int)str_replace(' ','',$l[2]),0,',',' ') ?> <small style="color:var(--text-muted); font-size:10px;">FCFA</small></td>
-            <td style="color:var(--accent-green); font-weight:600;"><?= $l[3] != '0' ? number_format((int)str_replace(' ','',$l[3]),0,',',' ').' FCFA' : '—' ?></td>
-            <td style="color:<?= $l[4]!='0'?'var(--accent-red)':'var(--text-muted)' ?>; font-weight:600;"><?= $l[4] != '0' ? number_format((int)str_replace(' ','',$l[4]),0,',',' ').' FCFA' : '—' ?></td>
+            <td style="color:var(--accent-green); font-weight:600;"><?= $l[3] != '0' ? number_format((int)str_replace(' ','',$l[3]),0,',',' ').' FCFA' : 'â€”' ?></td>
+            <td style="color:<?= $l[4]!='0'?'var(--accent-red)':'var(--text-muted)' ?>; font-weight:600;"><?= $l[4] != '0' ? number_format((int)str_replace(' ','',$l[4]),0,',',' ').' FCFA' : 'â€”' ?></td>
             <td style="color:var(--text-muted); font-size:12.5px;">
               <i class="fa-solid fa-calendar" style="font-size:11px; margin-right:4px;"></i><?= $l[5] ?>
             </td>
@@ -122,7 +124,7 @@ require_once '../includes/header.php';
             </td>
             <td><span class="badge <?= $sc ?>"><i class="fa-solid <?= $si ?>"></i><?= $l[7] ?></span></td>
             <td>
-              <?php if($l[7]=='Payé'): ?>
+              <?php if($l[7]=='PayÃ©'): ?>
               <button class="btn btn-outline btn-sm">
                 <i class="fa-solid fa-file-pdf" style="color:var(--accent-red);"></i> PDF
               </button>
@@ -142,3 +144,4 @@ require_once '../includes/header.php';
 </div>
 
 <?php require_once '../includes/footer.php'; ?>
+

@@ -116,3 +116,17 @@ function toggleTheme() {
     if (icon) icon.className = 'fa-solid fa-moon';
   }
 })();
+
+function toggleTheme() {
+  var isLight = document.body.classList.toggle('light-mode');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  var icon = document.getElementById('themeIcon');
+  if (icon) icon.className = isLight ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+}
+(function(){
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-mode');
+    var icon = document.getElementById('themeIcon');
+    if (icon) icon.className = 'fa-solid fa-moon';
+  }
+})();

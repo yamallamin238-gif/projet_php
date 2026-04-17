@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 session_start();
 
 require_once __DIR__ . '/database.php';
@@ -7,7 +7,7 @@ require_once __DIR__ . '/database.php';
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5 Mo
 
-// Vérification de session
+// VÃ©rification de session
 function isLoggedIn(): bool {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
@@ -27,7 +27,7 @@ function getCurrentUser(): ?array {
     return $stmt->fetch() ?: null;
 }
 
-// Formatage monétaire
+// Formatage monÃ©taire
 function formatMontant(float $montant, string $devise = 'FCFA'): string {
     return number_format($montant, 0, ',', ' ') . ' ' . $devise;
 }
@@ -38,23 +38,23 @@ function formatDate(?string $date, string $format = 'd/m/Y'): string {
     return date($format, strtotime($date));
 }
 
-// Génération numéro unique
+// GÃ©nÃ©ration numÃ©ro unique
 function generateNumero(string $prefix): string {
-    return $prefix . '-' . date('Y') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
+    return $prefix . '-' . date('Y') . '-' . str_pad(random_int(1, 9999), 4, '0', STR_PAD_LEFT);
 }
 
 // Badge statut
 function badgeStatut(string $statut): string {
     $map = [
         'en_cours'   => ['success', 'En cours'],
-        'resilie'    => ['danger', 'Résilié'],
-        'expire'     => ['warning', 'Expiré'],
-        'paye'       => ['success', 'Payé'],
+        'resilie'    => ['danger', 'RÃ©siliÃ©'],
+        'expire'     => ['warning', 'ExpirÃ©'],
+        'paye'       => ['success', 'PayÃ©'],
         'retard'     => ['danger', 'Retard'],
         'partiel'    => ['warning', 'Partiel'],
         'en_attente' => ['secondary', 'En attente'],
         'libre'      => ['info', 'Libre'],
-        'occupe'     => ['success', 'Occupé'],
+        'occupe'     => ['success', 'OccupÃ©'],
         'travaux'    => ['warning', 'Travaux'],
         'actif'      => ['success', 'Actif'],
         'inactif'    => ['secondary', 'Inactif'],
@@ -77,3 +77,4 @@ function getFlash(): ?array {
     }
     return null;
 }
+

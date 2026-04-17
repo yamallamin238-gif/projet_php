@@ -1,5 +1,7 @@
 ﻿<?php
 $page_title = 'Tableau de bord';
+require_once '../config/app.php';
+requireLogin();
 require_once '../includes/header.php';
 
 // === DonnÃ©es fictives (Ã  remplacer par vrai DB) ===
@@ -309,4 +311,5 @@ $stats = [
 </div><!-- /.page-content -->
 
 <?php require_once '../includes/footer.php'; ?>
+
 

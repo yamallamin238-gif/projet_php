@@ -13,6 +13,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <!-- App CSS -->
   <link rel="stylesheet" href="../assets/css/style.css">
 </head>
@@ -168,4 +170,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <button class="btn-icon" id="toggleTheme" title="Mode clair/sombre" onclick="toggleTheme()"><i class="fa-solid fa-sun" id="themeIcon"></i></button>
   </div>
 </header>
+
+
 

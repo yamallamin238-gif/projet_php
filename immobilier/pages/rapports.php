@@ -1,8 +1,8 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../config/app.php';
 requireLogin();
 $currentUser = getCurrentUser();
-$pageTitle   = 'Rapports — ' . APP_NAME;
+$pageTitle   = 'Rapports â€” ' . APP_NAME;
 $db = getDB();
 
 $annee = (int)($_GET['annee'] ?? date('Y'));
@@ -35,7 +35,7 @@ $tauxOcc = $db->query("
 ")->fetch();
 $taux = $tauxOcc['total'] > 0 ? round($tauxOcc['occupes'] / $tauxOcc['total'] * 100) : 0;
 
-// Top locataires impayés
+// Top locataires impayÃ©s
 $topImpayes = $db->query("
     SELECT CONCAT(l.prenom,' ',l.nom) AS locataire,
            SUM(q.montant_total - q.montant_paye) AS dette
@@ -52,7 +52,7 @@ $totalCharges->execute([$annee]);
 $totalCharges = (float)$totalCharges->fetchColumn();
 $benefice = $totalRecettes - $totalCharges;
 
-$moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+$moisNoms = ['Jan','FÃ©v','Mar','Avr','Mai','Jun','Jul','AoÃ»','Sep','Oct','Nov','DÃ©c'];
 ?>
 <?php include __DIR__ . '/../includes/header.php'; ?>
 
@@ -90,7 +90,7 @@ $moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov'
     <div class="card border-0 shadow-sm text-center">
       <div class="card-body">
         <div class="fs-4 fw-bold <?= $benefice >= 0 ? 'text-primary' : 'text-danger' ?>"><?= formatMontant($benefice) ?></div>
-        <div class="text-muted small">Bénéfice net <?= $annee ?></div>
+        <div class="text-muted small">BÃ©nÃ©fice net <?= $annee ?></div>
       </div>
     </div>
   </div>
@@ -117,7 +117,7 @@ $moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov'
         <div class="display-1 fw-bold <?= $taux >= 75 ? 'text-success' : ($taux >= 50 ? 'text-warning' : 'text-danger') ?>">
           <?= $taux ?>%
         </div>
-        <div class="text-muted mt-2"><?= $tauxOcc['occupes'] ?> / <?= $tauxOcc['total'] ?> logements occupés</div>
+        <div class="text-muted mt-2"><?= $tauxOcc['occupes'] ?> / <?= $tauxOcc['total'] ?> logements occupÃ©s</div>
         <div class="progress mt-3" style="height:10px">
           <div class="progress-bar <?= $taux >= 75 ? 'bg-success' : ($taux >= 50 ? 'bg-warning' : 'bg-danger') ?>"
                style="width:<?= $taux ?>%"></div>
@@ -126,15 +126,15 @@ $moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov'
     </div>
   </div>
 
-  <!-- Top impayés -->
+  <!-- Top impayÃ©s -->
   <div class="col-lg-6">
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-white border-0 pt-4 pb-0">
-        <h6 class="fw-bold">Top impayés</h6>
+        <h6 class="fw-bold">Top impayÃ©s</h6>
       </div>
       <div class="card-body">
         <?php if (empty($topImpayes)): ?>
-          <p class="text-center text-muted py-3"><i class="bi bi-check-circle text-success fs-2 d-block mb-2"></i>Aucun impayé</p>
+          <p class="text-center text-muted py-3"><i class="bi bi-check-circle text-success fs-2 d-block mb-2"></i>Aucun impayÃ©</p>
         <?php else: ?>
         <?php foreach ($topImpayes as $i): ?>
         <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
@@ -151,11 +151,11 @@ $moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov'
   <div class="col-lg-6">
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-white border-0 pt-4 pb-0">
-        <h6 class="fw-bold">Charges par type — <?= $annee ?></h6>
+        <h6 class="fw-bold">Charges par type â€” <?= $annee ?></h6>
       </div>
       <div class="card-body">
         <?php if (empty($chargesType)): ?>
-          <p class="text-center text-muted py-3">Aucune charge cette année</p>
+          <p class="text-center text-muted py-3">Aucune charge cette annÃ©e</p>
         <?php else: ?>
         <?php foreach ($chargesType as $ch): ?>
         <?php $pct = $totalCharges > 0 ? round($ch['total']/$totalCharges*100) : 0; ?>
@@ -175,7 +175,6 @@ $moisNoms = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov'
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const ctx = document.getElementById('chartRecettes');
 new Chart(ctx, {
@@ -200,3 +199,4 @@ new Chart(ctx, {
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
+

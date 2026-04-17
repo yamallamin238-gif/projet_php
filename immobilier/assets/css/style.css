@@ -592,3 +592,14 @@ body.light-mode .search-box { background: #f0f2f5; border-color: #e1e4e8; }
 body.light-mode .search-box input { color: #1c2128; }
 body.light-mode table thead tr { background: #f6f8fa; }
 body.light-mode table tbody tr:hover { background: #f0f2f5; }
+
+body.light-mode {
+  --bg-main: #f4f6f9; --bg-card: #ffffff; --bg-sidebar: #ffffff;
+  --border: #e1e4e8; --text-primary: #1c2128; --text-muted: #57606a; --text-dim: #8c959f;
+}
+body.light-mode .sidebar  { box-shadow: 2px 0 12px rgba(0,0,0,.08); }
+body.light-mode .topbar   { background:#ffffff; border-bottom:1px solid #e1e4e8; }
+body.light-mode .card     { box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+body.light-mode .search-box { background:#f0f2f5; }
+body.light-mode table thead tr { background:#f6f8fa; }
+body.light-mode table tbody tr:hover { background:#f0f2f5; }

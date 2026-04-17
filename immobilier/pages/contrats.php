@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $page_title = 'Contrats';
+require_once '../config/app.php';
+requireLogin();
 require_once '../includes/header.php';
 ?>
 
@@ -11,7 +13,7 @@ require_once '../includes/header.php';
         <i class="fa-solid fa-file-contract" style="color:var(--accent-gold); margin-right:10px;"></i>
         Gestion des contrats
       </h1>
-      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">18 actifs · 2 en cours de renouvellement · 1 expiré</p>
+      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">18 actifs Â· 2 en cours de renouvellement Â· 1 expirÃ©</p>
     </div>
     <a href="?action=new" class="btn btn-primary">
       <i class="fa-solid fa-pen-to-square"></i> Nouveau contrat
@@ -21,7 +23,7 @@ require_once '../includes/header.php';
   <!-- Alertes contrats -->
   <div class="alert alert-warning">
     <i class="fa-solid fa-triangle-exclamation"></i>
-    <strong>3 contrats</strong> expirent dans les 30 prochains jours. Pensez à les renouveler.
+    <strong>3 contrats</strong> expirent dans les 30 prochains jours. Pensez Ã  les renouveler.
   </div>
 
   <div class="card">
@@ -37,11 +39,11 @@ require_once '../includes/header.php';
       <table>
         <thead>
           <tr>
-            <th>N° Contrat</th>
+            <th>NÂ° Contrat</th>
             <th>Locataire</th>
             <th>Bien</th>
             <th>Type</th>
-            <th>Début</th>
+            <th>DÃ©but</th>
             <th>Fin</th>
             <th>Loyer</th>
             <th>Statut</th>
@@ -51,22 +53,22 @@ require_once '../includes/header.php';
         <tbody>
           <?php
           $contrats = [
-            ['CTR-001','Moussa Diop',    'Appt T3 – Bloc A',    'Location nue',     '01/01/2024','31/12/2025','180 000','Actif'],
-            ['CTR-002','Fatou Ndiaye',   'Studio – Bloc B',     'Location meublée', '01/03/2024','28/02/2026','95 000', 'Actif'],
-            ['CTR-003','Aminata Sow',    'Villa F4 – Sacré Cœur','Location nue',   '01/07/2023','30/06/2025','350 000','Expiration proche'],
-            ['CTR-004','Omar Ba',        'Appt T2 – Centre',    'Location nue',     '01/02/2024','31/01/2026','120 000','Actif'],
-            ['CTR-005','Ndèye Fall',     'Studio – HLM',        'Location meublée', '01/05/2024','30/04/2026','80 000', 'Actif'],
-            ['CTR-006','Ibrahima Sall',  'Appt T4 – Plateau',   'Location nue',     '01/10/2023','30/09/2025','250 000','Expiration proche'],
+            ['CTR-001','Moussa Diop',    'Appt T3 â€“ Bloc A',    'Location nue',     '01/01/2024','31/12/2025','180 000','Actif'],
+            ['CTR-002','Fatou Ndiaye',   'Studio â€“ Bloc B',     'Location meublÃ©e', '01/03/2024','28/02/2026','95 000', 'Actif'],
+            ['CTR-003','Aminata Sow',    'Villa F4 â€“ SacrÃ© CÅ“ur','Location nue',   '01/07/2023','30/06/2025','350 000','Expiration proche'],
+            ['CTR-004','Omar Ba',        'Appt T2 â€“ Centre',    'Location nue',     '01/02/2024','31/01/2026','120 000','Actif'],
+            ['CTR-005','NdÃ¨ye Fall',     'Studio â€“ HLM',        'Location meublÃ©e', '01/05/2024','30/04/2026','80 000', 'Actif'],
+            ['CTR-006','Ibrahima Sall',  'Appt T4 â€“ Plateau',   'Location nue',     '01/10/2023','30/09/2025','250 000','Expiration proche'],
           ];
           $colors = ['#3fb950','#1f6feb','#8b5cf6','#e3b341','#ec4899','#06b6d4'];
           foreach($contrats as $i => $c):
             $sc = match($c[7]) {
               'Actif'=>'badge-success','Expiration proche'=>'badge-warning',
-              'Expiré'=>'badge-danger','Résilié'=>'badge-danger', default=>'badge-info'
+              'ExpirÃ©'=>'badge-danger','RÃ©siliÃ©'=>'badge-danger', default=>'badge-info'
             };
             $si = match($c[7]) {
               'Actif'=>'fa-circle-check','Expiration proche'=>'fa-clock',
-              'Expiré'=>'fa-circle-xmark', default=>'fa-circle'
+              'ExpirÃ©'=>'fa-circle-xmark', default=>'fa-circle'
             };
           ?>
           <tr>
@@ -88,7 +90,7 @@ require_once '../includes/header.php';
             </td>
             <td>
               <span style="font-size:12px; display:flex; align-items:center; gap:5px;">
-                <i class="fa-solid fa-<?= strpos($c[3],'meublée')!==false ? 'couch' : 'key' ?>" style="color:var(--accent-purple, #8b5cf6);"></i>
+                <i class="fa-solid fa-<?= strpos($c[3],'meublÃ©e')!==false ? 'couch' : 'key' ?>" style="color:var(--accent-purple, #8b5cf6);"></i>
                 <?= $c[3] ?>
               </span>
             </td>
@@ -125,3 +127,4 @@ require_once '../includes/header.php';
 </div>
 
 <?php require_once '../includes/footer.php'; ?>
+

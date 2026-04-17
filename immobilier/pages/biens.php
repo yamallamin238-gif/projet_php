@@ -1,5 +1,7 @@
-<?php
+﻿<?php
 $page_title = 'Biens immobiliers';
+require_once '../config/app.php';
+requireLogin();
 require_once '../includes/header.php';
 ?>
 
@@ -11,7 +13,7 @@ require_once '../includes/header.php';
         <i class="fa-solid fa-city" style="color:var(--accent-gold); margin-right:10px;"></i>
         Biens immobiliers
       </h1>
-      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">24 biens · 18 occupés · 6 vacants</p>
+      <p style="color:var(--text-muted); font-size:13px; margin-top:4px;">24 biens Â· 18 occupÃ©s Â· 6 vacants</p>
     </div>
     <a href="?action=new" class="btn btn-primary">
       <i class="fa-solid fa-building-circle-arrow-right"></i> Ajouter un bien
@@ -22,18 +24,18 @@ require_once '../includes/header.php';
   <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
     <?php
     $biens = [
-      ['fa-building',       '#1f6feb','Résidence Les Baobabs','Dakar, Sacré Cœur','Immeuble','8 appts','1 440 000','6/8 occupés','Actif'],
-      ['fa-house',          '#3fb950','Villa Corniche',        'Dakar, Mermoz',    'Villa',   '4 pièces','350 000',  '1/1 occupé', 'Actif'],
-      ['fa-hotel',          '#8b5cf6','Immeuble Touba',        'Dakar, Médina',    'Immeuble','5 studios','500 000', '4/5 occupés','Actif'],
-      ['fa-house-flag',     '#e3b341','Duplex Almadies',       'Dakar, Almadies',  'Duplex',  '6 pièces','420 000',  '1/1 occupé', 'Actif'],
-      ['fa-warehouse',      '#06b6d4','Entrepôt Zone Indus.',  'Thiès, ZI',        'Commercial','500m²', '280 000',  '1/1 occupé', 'Actif'],
-      ['fa-building-columns','#ec4899','Bureaux Centre Aff.',   'Dakar, Plateau',   'Bureau',  '3 bureaux','600 000', '2/3 occupés','Actif'],
+      ['fa-building',       '#1f6feb','RÃ©sidence Les Baobabs','Dakar, SacrÃ© CÅ“ur','Immeuble','8 appts','1 440 000','6/8 occupÃ©s','Actif'],
+      ['fa-house',          '#3fb950','Villa Corniche',        'Dakar, Mermoz',    'Villa',   '4 piÃ¨ces','350 000',  '1/1 occupÃ©', 'Actif'],
+      ['fa-hotel',          '#8b5cf6','Immeuble Touba',        'Dakar, MÃ©dina',    'Immeuble','5 studios','500 000', '4/5 occupÃ©s','Actif'],
+      ['fa-house-flag',     '#e3b341','Duplex Almadies',       'Dakar, Almadies',  'Duplex',  '6 piÃ¨ces','420 000',  '1/1 occupÃ©', 'Actif'],
+      ['fa-warehouse',      '#06b6d4','EntrepÃ´t Zone Indus.',  'ThiÃ¨s, ZI',        'Commercial','500mÂ²', '280 000',  '1/1 occupÃ©', 'Actif'],
+      ['fa-building-columns','#ec4899','Bureaux Centre Aff.',   'Dakar, Plateau',   'Bureau',  '3 bureaux','600 000', '2/3 occupÃ©s','Actif'],
     ];
     foreach($biens as $b): ?>
     <div class="card" style="transition:transform .2s, box-shadow .2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 36px rgba(0,0,0,.5)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-      <!-- Header image simulé -->
+      <!-- Header image simulÃ© -->
       <div style="height:130px; background:linear-gradient(135deg, <?= $b[1] ?>22, <?= $b[1] ?>08); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
-        <!-- Pattern décoratif -->
+        <!-- Pattern dÃ©coratif -->
         <div style="position:absolute; width:200px; height:200px; background:<?= $b[1] ?>10; border-radius:50%; right:-50px; top:-50px;"></div>
         <div style="position:absolute; width:120px; height:120px; background:<?= $b[1] ?>08; border-radius:50%; left:-30px; bottom:-30px;"></div>
         <i class="fa-solid <?= $b[0] ?>" style="font-size:52px; color:<?= $b[1] ?>; position:relative; z-index:1; filter:drop-shadow(0 4px 12px <?= $b[1] ?>66);"></i>
@@ -59,7 +61,7 @@ require_once '../includes/header.php';
             </div>
           </div>
           <div style="background:rgba(255,255,255,.03); border:1px solid var(--border); border-radius:8px; padding:10px; text-align:center;">
-            <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Surface/Unités</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">Surface/UnitÃ©s</div>
             <div style="font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:5px;">
               <i class="fa-solid fa-door-open" style="font-size:11px; color:var(--accent-green);"></i><?= $b[5] ?>
             </div>
@@ -77,8 +79,8 @@ require_once '../includes/header.php';
         </div>
 
         <div style="display:flex; gap:8px;">
-          <a href="biens_detail.php?id=1" class="btn btn-outline btn-sm" style="flex:1; justify-content:center;">
-            <i class="fa-solid fa-eye"></i> Détails
+          <a href="biens.php" class="btn btn-outline btn-sm" style="flex:1; justify-content:center;">
+            <i class="fa-solid fa-eye"></i> DÃ©tails
           </a>
           <button class="btn btn-primary btn-sm" style="flex:1; justify-content:center;">
             <i class="fa-solid fa-pen"></i> Modifier
@@ -92,3 +94,5 @@ require_once '../includes/header.php';
 </div>
 
 <?php require_once '../includes/footer.php'; ?>
+
+

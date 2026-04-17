@@ -1,6 +1,6 @@
--- ============================================================
--- APPLICATION DE GESTION IMMOBILIÈRE
--- Base de données complète
+﻿-- ============================================================
+-- APPLICATION DE GESTION IMMOBILIÃˆRE
+-- Base de donnÃ©es complÃ¨te
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS gestionimmobilier
@@ -10,7 +10,7 @@ CREATE DATABASE IF NOT EXISTS gestionimmobilier
 USE gestionimmobilier;
 
 -- ============================================================
--- TABLE : utilisateurs (administrateurs du système)
+-- TABLE : utilisateurs (administrateurs du systÃ¨me)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS utilisateurs (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS proprietaires (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    civilite ENUM('M.','Mme','Mlle','Société') DEFAULT 'M.',
+    civilite ENUM('M.','Mme','Mlle','SociÃ©tÃ©') DEFAULT 'M.',
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100),
     email VARCHAR(150),
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS proprietaires (
     adresse TEXT,
     ville VARCHAR(100),
     code_postal VARCHAR(10),
-    pays VARCHAR(60) DEFAULT 'Sénégal',
+    pays VARCHAR(60) DEFAULT 'SÃ©nÃ©gal',
     rib VARCHAR(30),
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS proprietaires (
 );
 
 -- ============================================================
--- TABLE : immeubles / résidences
+-- TABLE : immeubles / rÃ©sidences
 -- ============================================================
 CREATE TABLE IF NOT EXISTS immeubles (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS immeubles (
     adresse TEXT NOT NULL,
     ville VARCHAR(100) NOT NULL,
     code_postal VARCHAR(10),
-    pays VARCHAR(60) DEFAULT 'Sénégal',
+    pays VARCHAR(60) DEFAULT 'SÃ©nÃ©gal',
     type ENUM('appartements','maisons','commerces','mixte') DEFAULT 'appartements',
     nb_unites INT DEFAULT 1,
     description TEXT,
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS immeubles (
 );
 
 -- ============================================================
--- TABLE : logements / unités locatives
+-- TABLE : logements / unitÃ©s locatives
 -- ============================================================
 CREATE TABLE IF NOT EXISTS logements (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS locataires (
     prenom VARCHAR(100) NOT NULL,
     date_naissance DATE,
     lieu_naissance VARCHAR(100),
-    nationalite VARCHAR(80) DEFAULT 'Sénégalaise',
+    nationalite VARCHAR(80) DEFAULT 'SÃ©nÃ©galaise',
     num_cni VARCHAR(50),
     email VARCHAR(150),
     telephone VARCHAR(20),
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS quittances (
 );
 
 -- ============================================================
--- TABLE : paiements (détail des paiements)
+-- TABLE : paiements (dÃ©tail des paiements)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS paiements (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS paiements (
 );
 
 -- ============================================================
--- TABLE : charges et dépenses
+-- TABLE : charges et dÃ©penses
 -- ============================================================
 CREATE TABLE IF NOT EXISTS charges (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -252,22 +252,22 @@ CREATE TABLE IF NOT EXISTS alertes (
 );
 
 -- ============================================================
--- DONNÉES INITIALES
+-- DONNÃ‰ES INITIALES
 -- ============================================================
 
--- Administrateur par défaut (mot de passe: admin123)
+-- Administrateur par dÃ©faut (mot de passe: admin123)
 INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe, role) VALUES
-('Administrateur', 'Système', 'admin@immobilier.sn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
+('Administrateur', 'SystÃ¨me', 'admin@immobilier.sn', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin');
 
--- Propriétaire exemple
+-- PropriÃ©taire exemple
 INSERT INTO proprietaires (civilite, nom, prenom, email, telephone, adresse, ville, pays) VALUES
-('M.', 'Diallo', 'Mamadou', 'mdiallo@email.sn', '+221 77 123 45 67', '15 Rue des Almadies', 'Dakar', 'Sénégal'),
-('Mme', 'Seck', 'Fatou', 'fseck@email.sn', '+221 76 987 65 43', '8 Avenue Bourguiba', 'Thiès', 'Sénégal');
+('M.', 'Diallo', 'Mamadou', 'mdiallo@email.sn', '+221 77 123 45 67', '15 Rue des Almadies', 'Dakar', 'SÃ©nÃ©gal'),
+('Mme', 'Seck', 'Fatou', 'fseck@email.sn', '+221 76 987 65 43', '8 Avenue Bourguiba', 'ThiÃ¨s', 'SÃ©nÃ©gal');
 
 -- Immeuble exemple
 INSERT INTO immeubles (proprietaire_id, nom, adresse, ville, type, nb_unites) VALUES
-(1, 'Résidence Les Almadies', '15 Rue des Almadies, Almadies', 'Dakar', 'appartements', 6),
-(2, 'Immeuble Centre Thiès', '8 Avenue Bourguiba', 'Thiès', 'mixte', 4);
+(1, 'RÃ©sidence Les Almadies', '15 Rue des Almadies, Almadies', 'Dakar', 'appartements', 6),
+(2, 'Immeuble Centre ThiÃ¨s', '8 Avenue Bourguiba', 'ThiÃ¨s', 'mixte', 4);
 
 -- Logements exemple
 INSERT INTO logements (immeuble_id, reference, type, etage, surface, nb_pieces, nb_chambres, loyer_base, charges, depot_garantie, statut) VALUES
@@ -280,9 +280,9 @@ INSERT INTO logements (immeuble_id, reference, type, etage, surface, nb_pieces, 
 
 -- Locataires exemple
 INSERT INTO locataires (civilite, nom, prenom, date_naissance, nationalite, num_cni, email, telephone, profession, salaire_mensuel, statut) VALUES
-('M.', 'Ndiaye', 'Ibrahima', '1985-03-15', 'Sénégalaise', '1234567890123', 'indiaye@email.sn', '+221 77 111 22 33', 'Ingénieur', 800000, 'actif'),
-('Mme', 'Ba', 'Aminata', '1990-07-22', 'Sénégalaise', '9876543210987', 'aba@email.sn', '+221 76 444 55 66', 'Médecin', 1200000, 'actif'),
-('M.', 'Fall', 'Ousmane', '1978-11-08', 'Sénégalaise', '5555555555555', 'ofall@email.sn', '+221 70 777 88 99', 'Commerçant', 600000, 'actif');
+('M.', 'Ndiaye', 'Ibrahima', '1985-03-15', 'SÃ©nÃ©galaise', '1234567890123', 'indiaye@email.sn', '+221 77 111 22 33', 'IngÃ©nieur', 800000, 'actif'),
+('Mme', 'Ba', 'Aminata', '1990-07-22', 'SÃ©nÃ©galaise', '9876543210987', 'aba@email.sn', '+221 76 444 55 66', 'MÃ©decin', 1200000, 'actif'),
+('M.', 'Fall', 'Ousmane', '1978-11-08', 'SÃ©nÃ©galaise', '5555555555555', 'ofall@email.sn', '+221 70 777 88 99', 'CommerÃ§ant', 600000, 'actif');
 
 -- Contrats exemple
 INSERT INTO contrats (numero, locataire_id, logement_id, date_debut, type, loyer_mensuel, charges_mensuelles, depot_garantie, depot_garantie_paye, jour_echeance, statut) VALUES
@@ -340,3 +340,4 @@ SELECT
 -- ============================================================
 -- FIN DU SCRIPT
 -- ============================================================
+
